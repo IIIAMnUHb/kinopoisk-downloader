@@ -24,7 +24,7 @@ function promisePool(tasks, concurrency) {
     return new Promise((resolve, reject) => {
         function next() {
             if (typeof tasks[currentIndex] != 'function') {
-                resolve(true);
+                return resolve(true);
             }
             tasks[currentIndex]().then(e => {
                 next();
@@ -145,11 +145,27 @@ async function start() {
     if(!fs.readdirSync('./').includes('tmp')) fs.mkdirSync('tmp');
 
     const promises = [];
+    const mirros = [
+        "mimin",
+        "promethium",
+        "aura",
+        "samarium",
+        "storm",
+        "venom",
+        "aquila",
+        "scorpius",
+        "osiris",
+        "stonehenge",
+        "grendel"
+    ];
+    const choosedMirror = mirros[Math.floor(Math.random()*11)] || mirros[0];
 
     for(let i = 0; i < arrayedSegments.length; i++) {
         promises.push(() => new Promise(r => {
             const segment = arrayedSegments[i];
-            const downloadLink = m3u8Link.replace('hls.m3u8', segment);
+            const downloadLink = m3u8Link
+                .replace('hls.m3u8', segment)
+                .replace('mediaaly.pro', choosedMirror+'.mediaaly.pro');
             try {
                 const ws = fs.createWriteStream('tmp/'+i+'.mp4');
                 https.get('https:'+downloadLink, {
@@ -174,6 +190,6 @@ async function start() {
 
     try { await promisePool(promises, 10); } catch {};
     await mergeFiles('movie.mp4');
-    fs.rmdirSync('tmp')
+    fs.rm('tmp', { recursive: true, force: true });
 }
 start();
