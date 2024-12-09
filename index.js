@@ -23,6 +23,9 @@ function promisePool(tasks, concurrency) {
 
     return new Promise((resolve, reject) => {
         function next() {
+            if (typeof tasks[currentIndex] != 'function') {
+                resolve(true);
+            }
             tasks[currentIndex]().then(e => {
                 next();
             })
@@ -169,7 +172,7 @@ async function start() {
         }))
     }
 
-    await promisePool(promises, 10);
+    try { await promisePool(promises, 10); } catch {};
     await mergeFiles('movie.mp4');
     fs.rmdirSync('tmp')
 }
