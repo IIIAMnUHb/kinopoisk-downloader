@@ -147,12 +147,25 @@ async function start() {
         promises.push(() => new Promise(r => {
             const segment = arrayedSegments[i];
             const downloadLink = m3u8Link.replace('hls.m3u8', segment);
-            const ws = fs.createWriteStream('tmp/'+i+'.mp4');
-            https.get('https:'+downloadLink, res => {
-                res.pipe(ws);
-                console.log('Начали скачивать сегмент ['+segment+'] ('+i+')');
-                res.on('end', () => { console.log('Сегмент скачан ['+segment+'] ('+i+')'); return r(true); });
-            })
+            try {
+                const ws = fs.createWriteStream('tmp/'+i+'.mp4');
+                https.get('https:'+downloadLink, {
+                    timeout: 60000
+                }, res => {
+                    res.pipe(ws);
+                    console.log('Начали скачивать сегмент ['+segment+'] ('+i+')');
+                    res.on('end', () => { console.log('Сегмент скачан ['+segment+'] ('+i+')'); return r(true); });
+                })
+            } catch {
+                const ws = fs.createWriteStream('tmp/'+i+'.mp4');
+                https.get('https:'+downloadLink, {
+                    timeout: 60000
+                }, res => {
+                    res.pipe(ws);
+                    console.log('Начали скачивать сегмент ['+segment+'] ('+i+')');
+                    res.on('end', () => { console.log('Сегмент скачан ['+segment+'] ('+i+')'); return r(true); });
+                })
+            }
         }))
     }
 
