@@ -66,15 +66,6 @@ function mergeFiles(output) {
     });
   }
 
-
-function splitArray(inputArray, subArraySize) {
-    let result = [];
-    for (let i = 0; i < inputArray.length; i += subArraySize) {
-      result.push(inputArray.slice(i, i + subArraySize));
-    }
-    return result;
-}
-
 async function start() {
     
     const id = await makeQuestion('Введите айди на кинопоиске: ');
@@ -168,6 +159,5 @@ async function start() {
     await promisePool(promises, 10);
     await mergeFiles('movie.mp4');
     fs.rmdirSync('tmp')
-
 }
 start();
