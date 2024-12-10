@@ -200,6 +200,6 @@ async function start() {
 
     try { await promisePool(promises, 10); } catch {};
     await mergeFiles('movie.mp4');
-    fs.rm('tmp', { recursive: true, force: true });
+    fs.rm('tmp', { recursive: true, force: true }, () => { console.log('Завершено.') });
 }
 start();
