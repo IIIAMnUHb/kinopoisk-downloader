@@ -69,12 +69,22 @@ function mergeFiles(output) {
     });
   }
 
+async function getParams(id) {
+    const response = await fetch('https://vavada.video/iframe/'+id);
+    const text = await response.text();
+    const firstCut = text.split('data-cinemaplayer-query-api-ip="')[1];
+    const lastCut = firstCut.split('"></div><script src="/the')[0];
+    const [ ip, hash ] = lastCut.split('" data-cinemaplayer-query-api-hash="');
+    return [ip,hash];
+}
+
 async function start() {
     
     const id = await makeQuestion('Введите айди на кинопоиске: ');
-
+    console.log('Получаем айди вашей страницы...');
+    const [ ip, hash ] = await getParams(id);
     console.log('Ищем плееры...');
-    const moviePlayers = JSON.parse(await request('https://vavada.video/cinemaplayer/information?hash=bbbd96b5d1a652a09bd4fea2fd56c2b3&ip=172.18.0.3&id='+id));
+    const moviePlayers = JSON.parse(await request('https://vavada.video/cinemaplayer/information?hash='+hash+'&ip='+ip+'&id='+id));
     if (!moviePlayers['simple-api']) {
         return console.log('Ничего не найдено.');
     }
