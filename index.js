@@ -191,7 +191,7 @@ async function start() {
             const m3u8Data = await request('https:'+m3u8Link);
             console.log('Медиа успешно получено ['+mediaPlayer.filename+']');
     
-            const types = m3u8Data.split('./').map(x => x.split('\n')[0]).slice(1, -1);
+            const types = m3u8Data.split('./').map(x => x.split('\n')[0]).slice(1);
             if (types.length > 1 && !choosedType) {
                 const typeID = await makeQuestion('Доступно несколько качеств для серий.\n\n'+types.map((x, i) => i+'. '+x).join('\n') + '\n\nНапишите номер нужного: ');
                 const numbered = Number(typeID);
@@ -205,7 +205,7 @@ async function start() {
             const typeLink = m3u8Link.replace('hls.m3u8', type);
     
             const segmentsList = await request('https:'+typeLink);
-            const arrayedSegments = segmentsList.split('./').map(x => x.split('\n')[0]).slice(1, -1);
+            const arrayedSegments = segmentsList.split('./').map(x => x.split('\n')[0]).slice(1);
     
             console.log('Получены сегменты для загрузки. Скачиваем... ['+mediaPlayer.filename+']');
             if(!fs.readdirSync('./').includes('tmp')) fs.mkdirSync('tmp');
@@ -287,7 +287,7 @@ async function start() {
         const m3u8Data = await request('https:'+m3u8Link);
         console.log('Медиа успешно получено');
 
-        const types = m3u8Data.split('./').map(x => x.split('\n')[0]).slice(1, -1);
+        const types = m3u8Data.split('./').map(x => x.split('\n')[0]).slice(1);
         let choosedType = 0;
         if (types.length > 1) {
             const typeID = await makeQuestion('Доступно несколько качеств для фильма.\n\n'+types.map((x, i) => i+'. '+x).join('\n') + '\n\nНапишите номер нужного: ');
@@ -302,7 +302,7 @@ async function start() {
         const typeLink = m3u8Link.replace('hls.m3u8', type);
 
         const segmentsList = await request('https:'+typeLink);
-        const arrayedSegments = segmentsList.split('./').map(x => x.split('\n')[0]).slice(1, -1);
+        const arrayedSegments = segmentsList.split('./').map(x => x.split('\n')[0]).slice(1);
 
         console.log('Получены сегменты для загрузки. Скачиваем...');
         if(!fs.readdirSync('./').includes('tmp')) fs.mkdirSync('tmp');
