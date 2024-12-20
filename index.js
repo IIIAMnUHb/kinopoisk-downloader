@@ -105,9 +105,9 @@ async function start() {
     //     return console.log('Сервис можно использовать - только для полнометражных фильмов и мультфильмов')
     // }
     console.log('Начинаем поиск основных данных...');
-    const movieData = JSON.parse(await request('https://api.lumex.pw/content?clientId='+clientId+'&contentType='+movieType+'&contentId='+movieId, {
+    const movieData = JSON.parse(await request('https://api.lumex.site/content?clientId='+clientId+'&contentType='+movieType+'&contentId='+movieId, {
         headers: {
-            origin: 'https://p.lumex.pw',
+            origin: 'https://p.lumex.site',
             'sec-fetch-dest': 'empty',
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
         }
@@ -180,10 +180,10 @@ async function start() {
         let choosedType = 0;
         for(const mediaPlayer of listOfEpisodes) {
 
-            const mediaURL = JSON.parse(await request('https://api.lumex.pw' + mediaPlayer.playlist, { 
+            const mediaURL = JSON.parse(await request('https://api.lumex.site' + mediaPlayer.playlist, { 
                 method: 'POST', 
                 headers: { 
-                    origin: 'https://p.lumex.pw' 
+                    origin: 'https://p.lumex.site' 
                 } 
             }));
             console.log('Ссылка на медиа успешно получена. ['+mediaPlayer.filename+']');
@@ -276,10 +276,10 @@ async function start() {
         console.log('Озвучка успешно выбрана. Начинаем подготовку медиа');
         const mediaPlayer = mediaPlayers[choosedMediaPlayer];
 
-        const mediaURL = JSON.parse(await request('https://api.lumex.pw' + mediaPlayer.playlist, { 
+        const mediaURL = JSON.parse(await request('https://api.lumex.site' + mediaPlayer.playlist, { 
             method: 'POST', 
             headers: { 
-                origin: 'https://p.lumex.pw' 
+                origin: 'https://p.lumex.site' 
             } 
         }));
         console.log('Ссылка на медиа успешно получена.');
