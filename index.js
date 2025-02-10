@@ -2,13 +2,12 @@ const rl = require('readline');
 const { https } = require('follow-redirects');
 const fs = require('fs')
 
+const input = rl.createInterface({
+    input: process.stdin,
+    output: process.stdout
+})
 function makeQuestion(q) {
     return new Promise(r => {
-        const input = rl.createInterface({
-            input: process.stdin,
-            output: process.stdout
-        })
-
         input.question(q, (answer) => { input.close(); return r(answer); })
     })
 }
@@ -85,22 +84,21 @@ async function start() {
     
     const id = await makeQuestion('Введите айди на кинопоиске: ');
     console.log('Получаем айди вашей страницы...');
-    const [ ip, hash ] = await getParams(id);
     console.log('Ищем плееры...');
-    const moviePlayers = JSON.parse(await request('https://vavada.video/cinemaplayer/information?hash='+hash+'&ip='+ip+'&id='+id));
-    if (!moviePlayers['simple-api']) {
+    const moviePlayers = JSON.parse(await request('https://kinobox.tv/api/players?kinopoisk='+id+'&sources=alloha,videocdn,collaps'));
+    if (!moviePlayers) {
         return console.log('Ничего не найдено.');
     }
-    const players = moviePlayers['simple-api'];
+    const players = moviePlayers;
     console.log('Найдено - ' + players.length + ' плеер(а)');
     console.log('Начинаем обработку...');
-    const lumex = players.filter(e => e.iframe.includes('lumex'));
+    const lumex = players.filter(e => e.iframeUrl.includes('lumex'));
     console.log('Отобрано - ' + lumex.length + ' подходящих плеер(ов).')
     if (lumex.length == 0) {
         return console.log('Нет подходящих плееров.');
     }
     const player = lumex[0];
-    const [ clientId, movieType, movieId ] = player.iframe.split('/').slice(-3);
+    const [ clientId, movieType, movieId ] = player.iframeUrl.split('/').slice(-3);
     // if (movieType != 'movie') {
     //     return console.log('Сервис можно использовать - только для полнометражных фильмов и мультфильмов')
     // }
