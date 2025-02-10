@@ -2,11 +2,11 @@ const rl = require('readline');
 const { https } = require('follow-redirects');
 const fs = require('fs')
 
-const input = rl.createInterface({
-    input: process.stdin,
-    output: process.stdout
-})
 function makeQuestion(q) {
+    const input = rl.createInterface({
+        input: process.stdin,
+        output: process.stdout
+    })
     return new Promise(r => {
         input.question(q, (answer) => { input.close(); return r(answer); })
     })
