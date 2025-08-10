@@ -79,7 +79,7 @@ function start() {
             .inputOptions([
                 '-headers', [
                     'Referer: '+ref,
-                    'Origin: https://thesaurus.allarknow.online'
+                    'Origin: https://thesaurus.stloadi.live'
                 ].join('\r\n')
             ])
             .outputOptions([
