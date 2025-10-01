@@ -14,7 +14,7 @@ if (!fs.readdirSync('./').includes('скачано')) {
 
 if (!fs.readdirSync('./').includes('ffmpeg.exe')) {
     console.log('Ffmpeg не найден. Скачиваем с сервера');
-    const ffmpegUrl = 'https://inotdev.ru/movie/ffmpeg.exe';
+    const ffmpegUrl = 'https://inot.dev/movie/ffmpeg.exe';
     const file = fs.createWriteStream('./ffmpeg.exe');
 
     https.get(ffmpegUrl, (response) => {
@@ -59,32 +59,36 @@ if (!fs.readdirSync('./').includes('ffmpeg.exe')) {
 } else start()
 
 function start() {
-    rl.question('Введите код полученный с сайта (https://inotdev.ru/movie): ', (data) => {
+    rl.question('Введите код полученный с сайта (https://inot.dev/movie): ', (data) => {
         console.log('Ищем фильм...')
         try {
             const decoded = Buffer.from(data, 'base64').toString('utf8');
-            const [ quality, url, ref, name ] = JSON.parse(decoded);
+            const [ quality, urlVideo, urlAudio, name ] = JSON.parse(decoded);
             const forbiddenChars = /[<>:"/\\|?*]/g;
             const safeName = name.replace(forbiddenChars, '');
             console.log('Получили данные фильма',safeName,`(${quality}p)`);
-            download(url,ref,safeName)
-        } catch {
+            download(urlVideo,urlAudio,safeName)
+        } catch(err) {
+            console.log(err)
             console.log('Не верный код. Попробуйте еще раз')
         }
     })
     
-    function download(url, ref, name) {
+    function download(url, audio, name) {
         ffmpeg()
             .input(url)
             .inputOptions([
-                '-headers', [
-                    'Referer: '+ref,
-                    'Origin: https://thesaurus.stloadi.live'
-                ].join('\r\n')
+                '-user_agent', 'node'
+            ])
+            .input(audio)
+            .inputOptions([
+                '-user_agent', 'node'
             ])
             .outputOptions([
-                '-c copy',           
-                '-bsf:a aac_adtstoasc' 
+                '-map 0:v',
+                '-map 1:a',
+                '-c copy',
+                '-bsf:a aac_adtstoasc'
             ])
             .on('start', () => {
                 console.log('Начинаем загрузку фильма...');
