@@ -59,7 +59,12 @@ if (!fs.readdirSync('./').includes('скачано')) {
 start()
 
 async function getMedia(url) {
-    const response = await fetch(url);
+    const response = await fetch(url, {
+        headers: {
+            'User-Agent': 'node',
+            'Referer': 'https://obrut.show/',
+        },
+    });
     return response.url.split(':hls:')[0]
 }
 
